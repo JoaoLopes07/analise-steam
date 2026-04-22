@@ -19,13 +19,13 @@ Este projeto tem como objetivo importar dados de jogos extraídos da Steam (via 
 ### 1. Clonar o repositório
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/JoaoLopes07/analise-steam.git
 cd steam_analytics
 ```
 
 ---
 
-### 2. Criar ambiente virtual (opcional, recomendado)
+### 2. Criar ambiente virtual (opcional)
 
 ```bash
 python -m venv venv
@@ -147,13 +147,6 @@ Os dados são organizados em três entidades principais:
 
 ---
 
-## ⚠️ Observações
-
-* O projeto utiliza SQLite por padrão (não requer instalação adicional)
-* Para uso em produção, pode ser adaptado para MySQL facilmente
-* O JSON deve seguir a estrutura esperada (com `raw_data`, `tags` e `rankings`)
-
----
 
 ## 📌 Conclusão
 
