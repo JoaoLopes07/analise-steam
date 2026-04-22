@@ -8,7 +8,7 @@ Este projeto tem como objetivo importar dados de jogos extraídos da Steam (via 
 
 ## ⚙️ Tecnologias utilizadas
 
-* Python 3.x
+* Python
 * Django
 * SQLite (banco de dados padrão)
 
