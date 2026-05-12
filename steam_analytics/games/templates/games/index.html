@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Steam Analytics</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #1b2838;
+            color: white;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input,
+        select,
+        button {
+
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #66c0f4;
+            color: black;
+            font-weight: bold;
+        }
+
+        #loading {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #errorMessage {
+            margin-top: 20px;
+            color: #ff8080;
+            font-weight: bold;
+        }
+
+        #gamesList {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill, minmax(300px, 1fr));
+
+            gap: 15px;
+
+            margin-top: 20px;
+        }
+
+        .game {
+
+            background: #2a475e;
+
+            padding: 15px;
+
+            border-radius: 12px;
+        }
+
+        .game h2 {
+            margin-top: 0;
+            color: #66c0f4;
+        }
+
+        .pagination {
+
+            margin-top: 30px;
+
+            display: flex;
+
+            gap: 10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>Steam Analytics</h1>
+
+<div class="filters">
+
+    <input
+        type="text"
+        id="includeAny"
+        placeholder="Tags obrigatórias (FPS, RPG)"
+    >
+
+    <input
+        type="text"
+        id="excludeAny"
+        placeholder="Excluir tags (Multiplayer)"
+    >
+
+    <select id="sortBy">
+
+        <option value="revenue">
+            Top Revenue
+        </option>
+
+        <option value="reviews">
+            Top Reviews
+        </option>
+
+        <option value="price">
+            Maior Preço
+        </option>
+
+    </select>
+
+    <button onclick="buscarJogos()">
+        Buscar
+    </button>
+
+</div>
+
+<div id="loading">
+    Carregando jogos...
+</div>
+
+<div id="errorMessage"></div>
+
+<div id="gamesList"></div>
+
+<div class="pagination">
+
+    <button onclick="paginaAnterior()">
+        ⬅ Página Anterior
+    </button>
+
+    <button onclick="proximaPagina()">
+        Próxima Página ➡
+    </button>
+
+</div>
+
+<script>
+
+let todosJogos = [];
+
+let paginaAtual = 1;
+
+const jogosPorPagina = 20;
+
+
+async function buscarJogos() {
+
+    const loading =
+        document.getElementById("loading");
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+    loading.style.display = "block";
+
+    errorMessage.innerHTML = "";
+
+    try {
+
+        const includeAny =
+            document.getElementById("includeAny")
+            .value
+            .trim();
+
+        const excludeAny =
+            document.getElementById("excludeAny")
+            .value
+            .trim();
+
+        const sortBy =
+            document.getElementById("sortBy")
+            .value;
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/games/?include_any=${includeAny}&exclude_any=${excludeAny}`
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Erro ao buscar API"
+            );
+        }
+
+        const data =
+            await response.json();
+
+        todosJogos = data.results;
+
+        if (todosJogos.length === 0) {
+
+            errorMessage.innerHTML =
+                "Nenhum jogo encontrado.";
+
+            document.getElementById("gamesList")
+                .innerHTML = "";
+
+            loading.style.display = "none";
+
+            return;
+        }
+
+        ordenarJogos(sortBy);
+
+        paginaAtual = 1;
+
+        renderizarPagina();
+
+    } catch (error) {
+
+        console.error(error);
+
+        errorMessage.innerHTML =
+            "Erro ao carregar jogos.";
+
+    } finally {
+
+        loading.style.display = "none";
+    }
+}
+
+
+function ordenarJogos(sortBy) {
+
+    if (sortBy === "revenue") {
+
+        todosJogos.sort(
+            (a, b) => b.revenue_1year - a.revenue_1year
+        );
+    }
+
+    if (sortBy === "reviews") {
+
+        todosJogos.sort(
+            (a, b) => b.review_count - a.review_count
+        );
+    }
+
+    if (sortBy === "price") {
+
+        todosJogos.sort(
+            (a, b) => b.price - a.price
+        );
+    }
+}
+
+
+function renderizarPagina() {
+
+    const gamesList =
+        document.getElementById("gamesList");
+
+    gamesList.innerHTML = "";
+
+    const inicio =
+        (paginaAtual - 1) * jogosPorPagina;
+
+    const fim =
+        inicio + jogosPorPagina;
+
+    const jogosPagina =
+        todosJogos.slice(inicio, fim);
+
+    jogosPagina.forEach(game => {
+
+        gamesList.innerHTML += `
+
+            <div class="game">
+
+                <h2>${game.name}</h2>
+
+                <p>
+                    💰 Preço: $${game.price ?? 0}
+                </p>
+
+                <p>
+                    ⭐ Reviews: ${game.review_count ?? 0}
+                </p>
+
+                <p>
+                    📈 Revenue:
+                    $${Math.floor(game.revenue_1year ?? 0)}
+                </p>
+
+                <p>
+                    📅 Lançamento:
+                    ${game.release_date ?? "N/A"}
+                </p>
+
+            </div>
+        `;
+    });
+}
+
+
+function proximaPagina() {
+
+    const totalPaginas = Math.ceil(
+        todosJogos.length / jogosPorPagina
+    );
+
+    if (paginaAtual < totalPaginas) {
+
+        paginaAtual++;
+
+        renderizarPagina();
+    }
+}
+
+
+function paginaAnterior() {
+
+    if (paginaAtual > 1) {
+
+        paginaAtual--;
+
+        renderizarPagina();
+    }
+}
+
+
+buscarJogos();
+
+</script>
+
+</body>
+</html>
