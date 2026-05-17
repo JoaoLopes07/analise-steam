@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Steam Analytics</title>
+
+    {% load static %}
+
+    <link
+        rel="stylesheet"
+        href="{% static 'games/css/style.css' %}"
+    >
+
+</head>
+
+<body>
+
+<h1>Steam Analytics</h1>
+
+<div class="filters">
+
+    <input
+        type="text"
+        id="includeAnd"
+        placeholder="INCLUDE_AND"
+    >
+
+    <input
+        type="text"
+        id="includeOr"
+        placeholder="INCLUDE_OR"
+    >
+
+    <input
+        type="text"
+        id="excludeAnd"
+        placeholder="EXCLUDE_AND"
+    >
+
+    <input
+        type="text"
+        id="excludeOr"
+        placeholder="EXCLUDE_OR"
+    >
+
+    <select id="sortBy">
+
+        <option value="revenue">
+            Receita
+        </option>
+
+        <option value="reviews">
+            Reviews
+        </option>
+
+        <option value="price">
+            Preço
+        </option>
+
+        <option value="release">
+            Lançamento
+        </option>
+
+    </select>
+
+    <button onclick="buscarJogos()">
+        Buscar
+    </button>
+
+</div>
+
+<div id="loading">
+    Carregando jogos...
+</div>
+
+<div id="errorMessage"></div>
+
+<div id="gamesList"></div>
+
+<div class="pagination">
+
+    <button onclick="paginaAnterior()">
+        ⬅ Página Anterior
+    </button>
+
+    <span id="pageInfo"></span>
+
+    <button onclick="proximaPagina()">
+        Próxima Página ➡
+    </button>
+
+</div>
+
+<script src="{% static 'games/js/app.js' %}"></script>
+
+</body>
+</html>
