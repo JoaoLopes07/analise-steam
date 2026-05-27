@@ -1,34 +1,11 @@
 import json
-from datetime import date
 
 from django.test import TestCase
-
-from games.models import Game, Tag
 
 
 class ListGamesAPITest(TestCase):
 
-    def setUp(self):
-        game1 = Game.objects.create(
-            appid=1,
-            name="Game Alpha",
-            price=29.99,
-            release_date=date(2022, 1, 15),
-            review_count=1500,
-            revenue_1year=45000.0,
-        )
-        Tag.objects.create(game=game1, name="Action")
-        Tag.objects.create(game=game1, name="RPG")
-
-        game2 = Game.objects.create(
-            appid=2,
-            name="Game Beta",
-            price=9.99,
-            release_date=date(2023, 6, 1),
-            review_count=300,
-            revenue_1year=3000.0,
-        )
-        Tag.objects.create(game=game2, name="Indie")
+    fixtures = ["test_games.json"]
 
     def test_basic_list_returns_200_with_expected_shape(self):
         response = self.client.get("/api/games/")

@@ -1,0 +1,48 @@
+[
+  {
+    "model": "games.game",
+    "pk": 1,
+    "fields": {
+      "name": "Game Alpha",
+      "price": 29.99,
+      "release_date": "2022-01-15",
+      "review_count": 1500,
+      "revenue_1year": 45000.0
+    }
+  },
+  {
+    "model": "games.game",
+    "pk": 2,
+    "fields": {
+      "name": "Game Beta",
+      "price": 9.99,
+      "release_date": "2023-06-01",
+      "review_count": 300,
+      "revenue_1year": 3000.0
+    }
+  },
+  {
+    "model": "games.tag",
+    "pk": 1,
+    "fields": {
+      "game": 1,
+      "name": "Action"
+    }
+  },
+  {
+    "model": "games.tag",
+    "pk": 2,
+    "fields": {
+      "game": 1,
+      "name": "RPG"
+    }
+  },
+  {
+    "model": "games.tag",
+    "pk": 3,
+    "fields": {
+      "game": 2,
+      "name": "Indie"
+    }
+  }
+]
